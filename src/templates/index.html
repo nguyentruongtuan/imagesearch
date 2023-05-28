@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  {% block head %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  {% block styles %}
+  <!-- Bootstrap CSS -->
+  {{ bootstrap.load_css() }}
+  <style>
+    body {
+      background: linear-gradient(to right, #c04848, #480048);
+      min-height: 100vh
+    }
+
+    .text-gray {
+      color: #aaa
+    }
+
+    img {
+      height: 170px;
+      width: 140px
+    }
+  </style>
+  {% endblock %}
+
+  <title>Search product with image</title>
+  {% endblock %}
+  <script>
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // console.log(`copied '${value}' to clipboard`);
+
+      const btn = document.getElementById('search-button')
+      const pasteButton = document.getElementById('paste-button')
+      const previewIMG = document.getElementById('search-image-preview')
+
+      btn.addEventListener('click', async () => {
+
+        try {
+
+          const imageData = await fetch(previewIMG.src)
+          const response = await fetch('/api/search', {
+            method: 'POST',
+            body: await imageData.blob(),
+
+          })
+
+          document.getElementById('result').innerHTML = await response.text()
+
+        } catch (err) {
+          console.error(err.name, err.message);
+        }
+      })
+
+
+
+      async function pasteImage(event) {
+
+        console.log(event)
+
+        try {
+          // const clipboardItems = await navigator.clipboard.read();
+          for (const clipboardItem of event.clipboardData.items) {
+
+
+            console.log(clipboardItem)
+            if (clipboardItem.type.indexOf('image/') === 0) {
+              previewIMG.src = URL.createObjectURL(clipboardItem.getAsFile());
+
+            }
+
+            event.preventDefault()
+
+          }
+        } catch (err) {
+          console.error(err.name, err.message);
+        }
+
+      }
+
+      const formFileLg = document.getElementById('formFile')
+      formFileLg.onchange = function() {
+        const [file] = formFileLg.files
+        if (file) {
+          previewIMG.src = URL.createObjectURL(file)
+        }
+      }
+
+
+      pasteButton.addEventListener('click', function (event) {
+        navigator.clipboard.read()
+        .then(data => {
+          try {
+            // const clipboardItems = await navigator.clipboard.read();
+            for (const clipboardItem of data) {
+
+
+              console.log(clipboardItem)
+
+              for (const type of clipboardItem.types) {
+
+                console.log(type)
+
+                if (type.indexOf('image') !== -1) {
+                  clipboardItem.getType(type)
+                    .then(blob => {
+                      console.log(blob)
+                       previewIMG.src = URL.createObjectURL(blob);
+                    })
+
+                }               
+
+
+              }
+
+
+              event.preventDefault()
+
+            }
+          } catch (err) {
+            console.error(err.name, err.message);
+          }
+
+        })
+      })
+
+
+      document.onpaste = pasteImage
+
+
+    })
+
+
+  </script>
+</head>
+
+<body>
+
+  <div class="container py-5">
+    <div class="row text-center text-white mb-5">
+
+      <div>
+        <a href="/product" class="btn btn-primary"> Add product </a>
+      </div>
+    </div>
+    <div class="row mb-5">
+            <div class="mb-6">
+              <label for="formFile" class="form-label">Select image</label>
+              <input class="form-control" type="file" id="formFile">
+            </div>
+    </div>
+    <div class="row text-center text-white mb-5">
+
+      <div class="mb-6">
+
+        <div>
+          <button type="button" id="paste-button" class="btn btn-primary">Paste</button>
+          <button type="button" id="search-button" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center text-white mb-5">
+
+      <img id="search-image-preview" width="200" height="200" />
+
+    </div>
+    <div class="row text-white mb-12">
+      <div class="col-lg-12 mx-auto" id="result">
+
+      </div>
+    </div>
+  </div>
+
+
+
+  </div>
+
+
+
+</body>
+
+</html>

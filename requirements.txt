@@ -1,0 +1,9 @@
+Flask
+flask_bootstrap
+Pillow
+python_imagesearch
+imutils
+pymongo
+opencv-python==4.5.5.64
+vptree
+beautifulsoup4
