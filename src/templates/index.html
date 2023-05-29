@@ -6,12 +6,27 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
+
   {% block styles %}
   <!-- Bootstrap CSS -->
   {{ bootstrap.load_css() }}
+  <style>
+    body {
+      background: linear-gradient(to right, #c04848, #480048);
+      min-height: 100vh
+    }
+
+    .text-gray {
+      color: #aaa
+    }
+
+    img {
+      height: 170px;
+      width: 140px
+    }
+  </style>
   {% endblock %}
-  
+
   <title>Search product with image</title>
   {% endblock %}
   <script>
@@ -30,12 +45,15 @@
             const imageTypes = clipboardItem.types.find(type => type.startsWith('image/'))
             const blob = await clipboardItem.getType(imageTypes);
 
-            fetch('/api/search', {
+            const response = await fetch('/api/search', {
               method: 'POST',
-              body: blob
-            })
-              .then(response => console.log(response))
+              body: blob,
 
+            })
+
+            document.getElementById('result').innerHTML = await response.text()
+              
+            console.log(response.text())
           }
         } catch (err) {
           console.error(err.name, err.message);
@@ -77,20 +95,28 @@
 
 <body>
 
-  <div class="container">
+  <div class="container py-5">
+    <div class="row text-center text-white mb-5">
 
-    <div>
-      <button type="button" id="paste-button" class="btn btn-primary">Search</button>
-      <img id="search-image-preview" width="200" height="200" />
+      <div>
+        <a href="/product" class="btn btn-primary"> Add product </a>
+      </div>
+    </div>
+    <div class="row text-center text-white mb-5">
+
+      <div>
+        <button type="button" id="paste-button" class="btn btn-primary">Search</button>
+        <img id="search-image-preview" width="200" height="200" />
+      </div>
     </div>
 
   </div>
 
-  <div>
-    <a href="/product"> Add product
+  <div class="col-lg-8 mx-auto" id="result">
+
   </div>
 
-
+  </div>
 
 
 

@@ -20,6 +20,9 @@ def genHash():
     imagePaths = list(paths.list_images('{}/data'.format(currentPath)))
     hashes = {}
 
+    if len(imagePaths) == 0:
+        return
+
     for (i, imagePath) in enumerate(imagePaths):
         # load the input image
         print("[INFO] processing image {}/{}".format(i + 1,

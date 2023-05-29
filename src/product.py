@@ -1,24 +1,37 @@
+from db import DB
+from utils import getCurrentPath, map_path
 
-import pymongo
 
-
-CLIENT = pymongo.MongoClient(
-    "mongodb://root:123123@localhost:27017/?authSource=admin")
-DB = CLIENT["searchimage"]
 productCol = DB["product"]
 
 
-def searchProduct(path):
+
+
+
+def searchProduct():
 
     productCol = DB["product"]
 
     products = []
 
-    for p in productCol.find():
+    for p in productCol.find().sort("_id"):
         products.append(p)
-    # pprint.pprint(products)
-    # for p in products:
-    #   print(p)
+
+    products = map(map_path, products)
+
+    return products
+
+
+def searchProductByPath(path=[]):
+
+    productCol = DB["product"]
+
+    products = []
+
+    for p in productCol.find({"path": {"$in": path}}):
+        products.append(p)
+
+    products = map(map_path, products)
 
     return products
 

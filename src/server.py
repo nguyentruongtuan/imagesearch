@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, json, redirect
 from search import searchFile
-from product import searchProduct, createProduct
+from product import searchProduct, createProduct, searchProductByPath
 from generateHash import genHash
 from bson import json_util
 from flask_bootstrap import Bootstrap4
 import os
 import pathlib
+from utils import convert_path
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='data')
 bootstrap = Bootstrap4(app)
 
 
@@ -22,7 +23,7 @@ def main():
 
 @app.route("/product", methods=["GET"])
 def product_list():
-    products = searchProduct('')
+    products = searchProduct()
 
     return render_template('product.html', bootstrap=bootstrap, products=products)
 
@@ -43,18 +44,15 @@ def create_product():
     return redirect('/product')
 
 
-@app.route("/api/generate", methods=['POST'])
+@app.route("/generate", methods=['POST'])
 def generate():
-    url = request.get_data['dataURL']
-    description = request.get_data['description']
-    allpaths = genHash()
-
-    return render_template('index.html')
+    genHash()
+    return redirect('/')
 
 
 @app.route("/api/product", methods=['GET'])
 def product():
-    product = searchProduct('ssss')
+    product = searchProduct()
 
     return parse_json({"prouducts": product})
 
@@ -77,6 +75,20 @@ def search():
     f.write(file)
     f.close()
 
-    result = searchFile(tmpPath)
+    paths = searchFile(tmpPath)
+    
+    result = searchProductByPath(path=paths[:3])
+    
+    products = []
+    for _path in paths:
+        for item in result:
+            if item["path"] == convert_path(_path):
+                products.append(item)
+    
+    resultHTML = render_template('result.html', products=products)
 
-    return parse_json(result)
+    return resultHTML
+
+def getstaticPath(path=''):
+    
+    return

@@ -10,7 +10,7 @@ import pymongo
 import pprint
 
 
-def searchFile(imgPath, disance=30):
+def searchFile(imgPath, disance=25):
     currentPath = pathlib.Path(__file__).parent.resolve()
     print("[INFO] loading VP-Tree and hashes...")
 
