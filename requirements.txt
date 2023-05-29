@@ -6,3 +6,4 @@ imutils
 pymongo
 opencv-python==4.5.5.64
 vptree
+beautifulsoup4

@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
 
-
 <head>
-
+  {% block head %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  {% block styles %}
+  <!-- Bootstrap CSS -->
+  {{ bootstrap.load_css() }}
+  {% endblock %}
+  
+  <title>Search product with image</title>
+  {% endblock %}
   <script>
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +30,7 @@
             const imageTypes = clipboardItem.types.find(type => type.startsWith('image/'))
             const blob = await clipboardItem.getType(imageTypes);
 
-            fetch('/search', {
+            fetch('/api/search', {
               method: 'POST',
               body: blob
             })
@@ -30,17 +40,6 @@
         } catch (err) {
           console.error(err.name, err.message);
         }
-      })
-
-      document.getElementById('update-button').addEventListener('click', () => {
-        fetch('/generate', {
-          method: 'POST'
-        })
-          .then(response => {
-
-            document.getElementById('update-status').innerText = 'Update Completed'
-            
-          })
       })
 
       const previewIMG = document.getElementById('search-image-preview')
@@ -78,19 +77,17 @@
 
 <body>
 
-  <div>
+  <div class="container">
+
     <div>
-    
-      <button id="update-button">Update data</button>
-      <div id="update-status"></div>
-    </div>
-
-
-    <div>      
-      <button id="paste-button">Search</button>
+      <button type="button" id="paste-button" class="btn btn-primary">Search</button>
       <img id="search-image-preview" width="200" height="200" />
     </div>
 
+  </div>
+
+  <div>
+    <a href="/product"> Add product
   </div>
 
 
