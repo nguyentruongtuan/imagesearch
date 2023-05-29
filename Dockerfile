@@ -8,6 +8,7 @@ WORKDIR /code
 ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 RUN pip install bootstrap-flask
+ENV DB_URL mongodb://root:123123@db:27017/?authSource=admin
 ADD ./src /code/
 EXPOSE 5000
 
